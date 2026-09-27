@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#163b63">
+  <title>Monatsmappe · CSV prüfen und übergeben</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .scroll-note { display: none; }
+    @media (max-width: 700px) {
+      .privacy { font-size: 12px; }
+      .table-scroll table { min-width: 610px; }
+      .table-scroll th:last-child,
+      .table-scroll td:last-child { position: sticky; right: 0; min-width: 90px; background: #fff; box-shadow: -6px 0 10px -10px #102d4f; }
+      .table-scroll th:last-child { background: #edf3f7; }
+      .scroll-note { display: inline; }
+      .issue { grid-template-columns: 70px 1fr; }
+      .issue span:last-child { grid-column: 1 / -1; }
+    }
+  </style>
+  <script defer src="core.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">M</span><span>Monatsmappe</span></div>
+    <span class="privacy">Läuft nur auf diesem Gerät</span>
+  </header>
+  <main class="workspace">
+    <aside class="rail" aria-labelledby="import-heading">
+      <div class="rail-heading"><h1 id="import-heading">Monat fertig machen.</h1><p>CSV aus deinem Kassensystem wählen, Spalten prüfen, Dateien weitergeben.</p></div>
+      <section class="import-block" aria-label="CSV-Datei importieren">
+        <label class="file-button">CSV-Datei wählen
+          <input id="file-input" type="file" accept=".csv,.txt,text/csv,text/plain">
+        </label>
+        <button id="demo-button" class="text-button" type="button">Mit Beispieldaten testen</button>
+        <p class="help">Die Datei wird nicht hochgeladen. Dein Original bleibt unverändert.</p>
+      </section>
+      <section id="mapping-panel" class="mapping-panel" hidden aria-labelledby="mapping-heading">
+        <div class="section-rule"><h2 id="mapping-heading">Spalten zuordnen</h2><span>2 Pflichtfelder</span></div>
+        <p id="source-label" class="source-label"></p>
+        <div class="fields">
+          <label>Datum <b>*</b><select data-map="date"></select></label>
+          <label>Bruttobetrag <b>*</b><select data-map="amount"></select></label>
+          <label>Typ <select data-map="type"></select></label>
+          <label>Steuerangabe aus Quelle <select data-map="tax"></select></label>
+          <label>Zahlungsart <select data-map="payment"></select></label>
+          <label>Belegnummer <select data-map="receipt"></select></label>
+          <label>Beschreibung <select data-map="description"></select></label>
+          <label>Typ, falls Spalte fehlt <select id="default-type"><option>Umsatz</option><option>Ausgabe</option><option>Sonstiges</option></select></label>
+        </div>
+        <p class="help">Keine Steuersätze oder Konten werden ergänzt. Die Steuerangabe wird nur übernommen, falls sie im Export steht.</p>
+      </section>
+    </aside>
+    <section class="sheet" aria-labelledby="sheet-heading">
+      <div class="sheet-top"><h2 id="sheet-heading">Deine Monatsübersicht</h2><button id="clear-button" class="quiet-button" type="button" hidden>Datei entfernen</button></div>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <div id="empty-state" class="empty-state"><div class="empty-symbol" aria-hidden="true"><span></span><span></span><span></span></div><h3>Hier entsteht die Übergabe.</h3><p>Nach dem Import siehst du Summen, auffällige Zeilen und drei CSV-Dateien für die weitere Prüfung. Starte mit einer eigenen Datei oder den klar markierten Beispieldaten.</p></div>
+      <div id="results" hidden>
+        <div class="status-strip"><span id="data-badge" class="badge"></span><span id="result-count"></span><span id="issue-count"></span><span class="scroll-note">Tabellen für Details seitlich wischen</span></div>
+        <section aria-labelledby="summary-heading"><div class="sheet-section-title"><h3 id="summary-heading">Summen nach Monat</h3><span>Brutto aus gültigen Zeilen</span></div><div class="table-scroll"><table><thead><tr><th>Monat</th><th>Typ</th><th>Steuerangabe</th><th>Zahlungsart</th><th class="num">Anzahl</th><th class="num">Brutto</th></tr></thead><tbody id="summary-body"></tbody></table></div></section>
+        <section aria-labelledby="issues-heading"><div class="sheet-section-title"><h3 id="issues-heading">Vor Übergabe prüfen</h3><span id="excluded-note"></span></div><div id="issues-list" class="issues-list"></div></section>
+        <section aria-labelledby="preview-heading"><div class="sheet-section-title"><h3 id="preview-heading">Zeilenansicht</h3><span>Erste 12 gültige Zeilen</span></div><div class="table-scroll"><table><thead><tr><th>Quelle</th><th>Datum</th><th>Typ</th><th>Beschreibung</th><th class="num">Brutto</th></tr></thead><tbody id="preview-body"></tbody></table></div></section>
+        <section class="export-section" aria-labelledby="export-heading"><div><h3 id="export-heading">Dateien für die Prüfung</h3><p>Excel-kompatible CSVs mit Semikolon und UTF-8. Sie ersetzen weder den Originalexport noch die Prüfung durch den Steuerberater.</p></div><div class="export-actions"><button type="button" data-export="summary">Summen-CSV</button><button type="button" data-export="rows">Verarbeitete Zeilen</button><button type="button" data-export="issues">Prüfliste</button></div></section>
+      </div>
+    </section>
+  </main>
+  <footer>Monatsmappe ist eine Vorbereitungshilfe, keine Steuererklärung oder DATEV-Schnittstelle.</footer>
+</body>
+</html>
